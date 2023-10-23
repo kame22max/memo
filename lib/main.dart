@@ -10,11 +10,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '20文字メモ',
-      theme: ThemeData(
-
-        primarySwatch: Colors.blue,
-      ),
       home: MemoListPage(),
     );
   }
