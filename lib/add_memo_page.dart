@@ -1,21 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Memo {
   String title;
   String content;
 
   Memo({required this.title, required this.content});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'content': content,
+    };
+  }
+
+  factory Memo.fromMap(Map<String, dynamic> map) {
+    return Memo(
+      title: map['title'],
+      content: map['content'],
+    );
+  }
+
 }
 
 class MemoListProvider extends ChangeNotifier {
   List<Memo> memos = [];
+  final String key = 'memos';
 
-  void addMemo(Memo memo) {
+  MemoListProvider() {
+    loadMemos();
+  }
+
+  Future<void> loadMemos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final memosData = prefs.getStringList(key);
+
+    if (memosData != null) {
+      memos = memosData.map((memoJson) => Memo.fromMap(memoJson as Map<String, dynamic>)).toList();
+      notifyListeners();
+    }
+  }
+
+  Future<void> addMemo(Memo memo) async {
     memos.add(memo);
     notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    final memosData = memos.map((memo) => memo.toMap()).toList();
+    prefs.setStringList(key, memosData.map((map) => map.toString()).toList());
   }
+
+  Future<void> deleteMemo(int index) async {
+    memos.removeAt(index);
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    final memosData = memos.map((memo) => memo.toMap()).toList();
+    prefs.setStringList(key, memosData.map((map) => map.toString()).toList());
+  }
+
+
+  // void addMemo(Memo memo) {
+  //   memos.add(memo);
+  //   notifyListeners();
+  // }
+  //
+  // void deleteMemo(int index) {
+  //   memos.removeAt(index);
+  //   notifyListeners();
+  // }
 }
+
 
 class MemoCreateScreen extends StatelessWidget {
   final TextEditingController titleController = TextEditingController();
