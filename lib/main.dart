@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:memo/memo_list_page.dart';
+import 'package:memo/add_memo_page.dart';
+import 'package:memo/memo_list_page.dart' as eos;
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -11,12 +12,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MemoListModel(),
-        child: MaterialApp(
-          home: MemoListPage(),
-        ),
+      create: (context) => MemoListProvider(),
+      child: MaterialApp(
+        home: MemoListPage(),
+      ),
     );
   }
 }
-
-

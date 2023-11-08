@@ -5,40 +5,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MemoEditModel extends ChangeNotifier {
 
-
-  final authorController = TextEditingController();
-
-
+  final titleController = TextEditingController();
+  final contentController = TextEditingController();
 
   String? title;
-  String? text;
+  String? content;
 
-  void setTitle(String title){
-    this.title = title;
-    notifyListeners();
-  }
 
-  void setText(String text){
-    this.text = text;
-    notifyListeners();
-  }
 
 }
 
 class MemoEditPage extends StatelessWidget {
-  final int? index;
-  MemoEditPage({this.index});
-
 
   @override
   Widget build(BuildContext context) {
-    final memoListModel = Provider.of<MemoListModel>(context);
-    final textController = TextEditingController();
-
-
-    if (index != null) {
-      textController.text = memoListModel.memos[index!].text;
-    }
 
     return Builder(builder: (context) {
       return Scaffold(
@@ -49,7 +29,7 @@ class MemoEditPage extends StatelessWidget {
           // backgroundColor: Colors.transparent,
           // elevation: 0,
           title: const Text(
-            'メモタイトル ',
+            '新規作成 ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 0, 0, 0),
@@ -71,29 +51,29 @@ class MemoEditPage extends StatelessWidget {
               child: Column(
                 children: [
                   TextField(
-                    controller: textController,
-                    decoration: const InputDecoration(hintText: '内容'),
+
+                    decoration: const InputDecoration(
+                        border: InputBorder.none, // 下線を非表示
+                        hintText: '内容'),
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
+
                   ElevatedButton(
                     onPressed: () {
-                      final text = textController.text;
-                      if (index != null) {
-                        memoListModel.editMemo(index!, Memo(text));
-                      } else {
-                        memoListModel.addMemo(Memo(text));
-                      }
-                      Navigator.pop(context);
+                      // final text = textController.text;
+                      // if (index != null) {
+                      //   memoListModel.editMemo(index!, Memo(text));
+                      // } else {
+                      //   memoListModel.addMemo(Memo(text));
+                      // }
+                      // Navigator.pop(context);
                     },
                     child: Text('Save'),
                   ),
-                  if (index != null)
+
                     TextButton(
                       onPressed: () {
-                        memoListModel.deleteMemo(index!);
-                        Navigator.pop(context);
+                        // memoListModel.deleteMemo(index!);
+                        // Navigator.pop(context);
                       },
                       child: Text('Delete'),
                     ),

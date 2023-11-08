@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:memo/add_memo_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:memo/domain.dart';
 import 'package:memo/memo_edit_page.dart';
 import 'package:memo/memo_list_model.dart';
@@ -6,30 +8,41 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Memo {
-  Memo(
-    this.text,
-  );
+  String title;
+  String content;
+  DateTime createdTime;
 
-  String text;
+  Memo({
+    required this.title,
+    required this.content,
+    required this.createdTime,
+  });
+
+  // メモオブジェクトをMapに変換するメソッド
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'content': content,
+      'createdTime': createdTime.toIso8601String(),
+    };
+  }
+
+  // Mapからメモオブジェクトを作成するファクトリメソッド
+  factory Memo.fromMap(Map<String, dynamic> map) {
+    return Memo(
+      title: map['title'],
+      content: map['content'],
+      createdTime: DateTime.parse(map['createdTime']),
+    );
+  }
 }
 
-class MemoListModel extends ChangeNotifier {
-  List<Memo> _memos = [];
 
-  List<Memo> get memos => _memos;
+class MemoListProvider extends ChangeNotifier {
+  List<Memo> memos = [];
 
   void addMemo(Memo memo) {
-    _memos.add(memo);
-    notifyListeners();
-  }
-
-  void editMemo(int index, Memo updatedMemo) {
-    _memos[index] = updatedMemo;
-    notifyListeners();
-  }
-
-  void deleteMemo(int index) {
-    _memos.removeAt(index);
+    memos.add(memo);
     notifyListeners();
   }
 }
@@ -37,79 +50,17 @@ class MemoListModel extends ChangeNotifier {
 class MemoListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final memoListModel = Provider.of<MemoListModel>(context);
-    final memos = memoListModel.memos;
-    return ChangeNotifierProvider(
-        create: (_) => MemoListModel(),
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white.withOpacity(0.0),
-            elevation: 0.0,
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    '編集',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 16,
-                    ),
-                  )),
-            ],
-          ),
-          body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Row(
-                  children: <Widget>[
-                    SizedBox(width: 16,),
-                    Text(
-                      'メモ一覧',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: memos.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MemoEditPage(index: index),
-                            ),
-                          );
-                        },
-                        onLongPress: () {},
-                        title: Text('test'),
-                      );
-                    },
-                  ),
-                ),
-              ]),
-          floatingActionButton: Builder(builder: (context) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MemoEditPage(),
-                    ),
-                  );
-                },
-                label: Text("新規作成"),
-              ),
-            );
-          }),
-        ));
+    final memoListProvider = Provider.of<MemoListProvider>(context);
+    final memos = memoListProvider.memos;
+    return ListView.builder(
+      itemCount: memos.length,
+      itemBuilder: (context, index) {
+        final memo = memos[index];
+        return ListTile(
+          title: Text(memo.title),
+          subtitle: Text(memo.content),
+        );
+      },
+    );
   }
 }
