@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart';
+
 
 class Memo {
+  int? id;
   String title;
   String content;
 
-  Memo({required this.title, required this.content});
+  Memo({this.id, required this.title, required this.content});
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'title': title,
       'content': content,
     };
@@ -17,60 +22,130 @@ class Memo {
 
   factory Memo.fromMap(Map<String, dynamic> map) {
     return Memo(
+      id: map['id'],
       title: map['title'],
       content: map['content'],
     );
   }
+}
 
+class MemoDatabaseHelper {
+  late Database _database;
+
+  Future<void> initializeDatabase() async {
+    final String path = join(await getDatabasesPath(), 'memos.db');
+
+    _database = await openDatabase(path, version: 1, onCreate: _createDatabase);
+  }
+
+  Future<void> _createDatabase(Database db, int version) async {
+    await db.execute(
+      'CREATE TABLE memos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT)',
+    );
+  }
+
+  Future<int> insertMemo(Memo memo) async {
+    return await _database.insert('memos', memo.toMap());
+  }
+
+  Future<List<Memo>> getMemos() async {
+    final List<Map<String, dynamic>> maps = await _database.query('memos');
+    return List.generate(maps.length, (i) {
+      return Memo.fromMap(maps[i]);
+    });
+  }
+
+  Future<void> updateMemo(Memo memo) async {
+    await _database.update(
+      'memos',
+      memo.toMap(),
+      where: 'id = ?',
+      whereArgs: [memo.id],
+    );
+  }
+
+  Future<void> deleteMemo(int id) async {
+    await _database.delete(
+      'memos',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
 
 class MemoListProvider extends ChangeNotifier {
   List<Memo> memos = [];
-  final String key = 'memos';
+  MemoDatabaseHelper _databaseHelper = MemoDatabaseHelper();
 
   MemoListProvider() {
+    initializeProvider();
+  }
+
+  Future<void> initializeProvider() async {
+    await _databaseHelper.initializeDatabase();
     loadMemos();
   }
 
   Future<void> loadMemos() async {
-    final prefs = await SharedPreferences.getInstance();
-    final memosData = prefs.getStringList(key);
-
-    if (memosData != null) {
-      memos = memosData.map((memoJson) => Memo.fromMap(memoJson as Map<String, dynamic>)).toList();
-      notifyListeners();
-    }
+    final memos = await _databaseHelper.getMemos();
+    this.memos = memos;
+    notifyListeners();
   }
 
   Future<void> addMemo(Memo memo) async {
-    memos.add(memo);
-    notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    final memosData = memos.map((memo) => memo.toMap()).toList();
-    prefs.setStringList(key, memosData.map((map) => map.toString()).toList());
+    await _databaseHelper.insertMemo(memo);
+    loadMemos();
   }
 
-  Future<void> deleteMemo(int index) async {
-    memos.removeAt(index);
-    notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    final memosData = memos.map((memo) => memo.toMap()).toList();
-    prefs.setStringList(key, memosData.map((map) => map.toString()).toList());
+  Future<void> updateMemo(Memo memo) async {
+    await _databaseHelper.updateMemo(memo);
+    loadMemos();
   }
 
-
-  // void addMemo(Memo memo) {
-  //   memos.add(memo);
-  //   notifyListeners();
-  // }
-  //
-  // void deleteMemo(int index) {
-  //   memos.removeAt(index);
-  //   notifyListeners();
-  // }
+  Future<void> deleteMemo(int id) async {
+    await _databaseHelper.deleteMemo(id);
+    loadMemos();
+  }
 }
+
+
+// class MemoListProvider extends ChangeNotifier {
+//   List<Memo> memos = [];
+//   final String key = 'memos';
+//
+//   MemoListProvider() {
+//     loadMemos();
+//   }
+//
+//   Future<void> loadMemos() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final memosData = prefs.getStringList(key);
+//
+//     if (memosData != null) {
+//       memos = memosData.map((memoJson) => Memo.fromMap(memoJson as Map<String, dynamic>)).toList();
+//       notifyListeners();
+//     }
+//   }
+//
+//   Future<void> addMemo(Memo memo) async {
+//     memos.add(memo);
+//     notifyListeners();
+//
+//     final prefs = await SharedPreferences.getInstance();
+//     final memosData = memos.map((memo) => memo.toMap()).toList();
+//     prefs.setStringList(key, memosData.map((map) => map.toString()).toList());
+//   }
+//
+//   Future<void> deleteMemo(int index) async {
+//     memos.removeAt(index);
+//     notifyListeners();
+//
+//     final prefs = await SharedPreferences.getInstance();
+//     final memosData = memos.map((memo) => memo.toMap()).toList();
+//     prefs.setStringList(key, memosData.map((map) => map.toString()).toList());
+//   }
+//
+// }
 
 
 class MemoCreateScreen extends StatelessWidget {
