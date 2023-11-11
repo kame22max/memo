@@ -45,6 +45,8 @@ class MemoDatabaseHelper {
   }
 
   Future<int> insertMemo(Memo memo) async {
+
+
     return await _database.insert('memos', memo.toMap());
   }
 
@@ -71,7 +73,11 @@ class MemoDatabaseHelper {
       whereArgs: [id],
     );
   }
+
+
 }
+
+
 
 class MemoListProvider extends ChangeNotifier {
   List<Memo> memos = [];

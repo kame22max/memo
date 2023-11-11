@@ -45,6 +45,14 @@ class MemoListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('メモ一覧'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              //画面遷移
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: memos.length,
