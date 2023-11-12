@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:memo/add_memo_page.dart';
 import 'package:memo/memo_list_page.dart';
+import 'package:memo/memo_list_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
