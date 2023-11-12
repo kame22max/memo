@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memo/memo_create_page.dart';
 import 'package:memo/memo_detail_page.dart';
 import 'package:memo/memo_list_provider.dart';
+import 'package:memo/setting_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -13,6 +14,20 @@ class MemoListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('メモ一覧'),
+        leading: IconButton(icon: Icon(Icons.settings),
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  SettingPage(),
+            ),
+          );
+        }
+
+
+    ),
+
         actions: [
           IconButton(
             icon: const Icon(Icons.delete),

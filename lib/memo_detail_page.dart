@@ -38,22 +38,31 @@ class MemoDetailScreen extends StatelessWidget {
             SizedBox(height: 16),
             TextFormField(
               controller: contentController,
-              maxLines: 5,
+              maxLines: null, // nullを指定すると複数行入力が可能になります
+              keyboardType: TextInputType.multiline, // キーボードのタイプを指定
               decoration: InputDecoration(labelText: '内容'),
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // メモを編集し、Providerを使用して更新
                 final updatedMemo = Memo(
                   title: titleController.text,
                   content: contentController.text,
                 );
                 final memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
-                memoListProvider.memos[index] = updatedMemo;
+                await memoListProvider.updateMemo(updatedMemo);
+
                 Navigator.pop(context);
               },
               child: Text('保存'),
+            ),
+            SizedBox(height: 2),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+              child: Text('キャンセル'),
             ),
           ],
         ),

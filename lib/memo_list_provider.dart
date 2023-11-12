@@ -50,7 +50,7 @@ class MemoListProvider extends ChangeNotifier {
       context: context,
       builder: (BuildContext dialogContext) {
         return CupertinoAlertDialog(
-          content: Text('本当にすべてのメモを削除しますか？'),
+          content: Text('すべてのメモを削除しますか？'),
           actions: <Widget>[
             TextButton(
               child: Text('はい'),

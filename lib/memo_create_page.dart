@@ -24,8 +24,10 @@ class MemoCreateScreen extends StatelessWidget {
             SizedBox(height: 16),
             TextFormField(
               controller: contentController,
-              maxLines: 5,
+              maxLines: null,  // 複数行入力可能に設定
+              keyboardType: TextInputType.multiline,  // キーボードのタイプを指定
               decoration: InputDecoration(labelText: '内容'),
+
             ),
             SizedBox(height: 16),
             ElevatedButton(
@@ -41,6 +43,13 @@ class MemoCreateScreen extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: Text('保存'),
+            ),
+            SizedBox(height: 2),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+              },
+              child: Text('キャンセル'),
             ),
           ],
         ),
