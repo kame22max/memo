@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
-
+import 'package:cupertino_icons/cupertino_icons.dart';
 
 class Memo {
   int? id;
@@ -74,6 +74,10 @@ class MemoDatabaseHelper {
     );
   }
 
+  Future<void> deleteAllMemos() async {
+    await _database.delete('memos');
+  }
+
 
 }
 
@@ -112,50 +116,49 @@ class MemoListProvider extends ChangeNotifier {
     await _databaseHelper.deleteMemo(id);
     loadMemos();
   }
+
+  Future<void> deleteAllMemos() async {
+    await _databaseHelper.deleteAllMemos();
+    loadMemos();
+  }
+
+
+
+  Future<void> showDeleteConfirmationDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('確認'),
+          content: Text('本当にすべてのメモを削除しますか？'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('はい'),
+              onPressed: () {
+                deleteAllMemos();
+                Navigator.of(dialogContext).pop(); // ダイアログを閉じる
+              },
+            ),
+            TextButton(
+              child: Text('いいえ'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // ダイアログを閉じる
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteAllMemosWithConfirmation(BuildContext context) async {
+    await showDeleteConfirmationDialog(context);
+  }
 }
 
 
-// class MemoListProvider extends ChangeNotifier {
-//   List<Memo> memos = [];
-//   final String key = 'memos';
-//
-//   MemoListProvider() {
-//     loadMemos();
-//   }
-//
-//   Future<void> loadMemos() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     final memosData = prefs.getStringList(key);
-//
-//     if (memosData != null) {
-//       memos = memosData.map((memoJson) => Memo.fromMap(memoJson as Map<String, dynamic>)).toList();
-//       notifyListeners();
-//     }
-//   }
-//
-//   Future<void> addMemo(Memo memo) async {
-//     memos.add(memo);
-//     notifyListeners();
-//
-//     final prefs = await SharedPreferences.getInstance();
-//     final memosData = memos.map((memo) => memo.toMap()).toList();
-//     prefs.setStringList(key, memosData.map((map) => map.toString()).toList());
-//   }
-//
-//   Future<void> deleteMemo(int index) async {
-//     memos.removeAt(index);
-//     notifyListeners();
-//
-//     final prefs = await SharedPreferences.getInstance();
-//     final memosData = memos.map((memo) => memo.toMap()).toList();
-//     prefs.setStringList(key, memosData.map((map) => map.toString()).toList());
-//   }
-//
-// }
-
-
 class MemoCreateScreen extends StatelessWidget {
-  final TextEditingController titleController = TextEditingController();
+  final TextEditingController titleController = TextEditingController(text: '名無しのタイトル');
   final TextEditingController contentController = TextEditingController();
 
   @override

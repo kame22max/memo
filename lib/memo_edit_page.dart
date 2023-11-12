@@ -11,8 +11,6 @@ class MemoEditModel extends ChangeNotifier {
   String? title;
   String? content;
 
-
-
 }
 
 class MemoEditPage extends StatelessWidget {
@@ -59,21 +57,14 @@ class MemoEditPage extends StatelessWidget {
 
                   ElevatedButton(
                     onPressed: () {
-                      // final text = textController.text;
-                      // if (index != null) {
-                      //   memoListModel.editMemo(index!, Memo(text));
-                      // } else {
-                      //   memoListModel.addMemo(Memo(text));
-                      // }
-                      // Navigator.pop(context);
+
                     },
                     child: Text('Save'),
                   ),
 
                     TextButton(
                       onPressed: () {
-                        // memoListModel.deleteMemo(index!);
-                        // Navigator.pop(context);
+
                       },
                       child: Text('Delete'),
                     ),

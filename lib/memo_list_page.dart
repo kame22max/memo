@@ -6,6 +6,8 @@ import 'package:memo/memo_edit_page.dart';
 import 'package:memo/memo_list_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
+
 
 // class Memo {
 //   String title;
@@ -48,7 +50,8 @@ class MemoListPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete),
-            onPressed: () {
+            onPressed: () async {
+              await memoListProvider.deleteAllMemosWithConfirmation(context);
               //画面遷移
             },
           ),
@@ -84,7 +87,7 @@ class MemoListPage extends StatelessWidget {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => MemoCreateScreen()));
         },
-        label: Text('Add'), //テキスト
+        label: Text('新規作成'), //テキスト
         icon: Icon(Icons.add), //アイコン
       ),
     );
@@ -105,6 +108,15 @@ class MemoDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('メモ詳細'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              _showDeleteDialog(context, index);
+              //画面遷移
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
