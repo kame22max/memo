@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
+import 'package:flutter/cupertino.dart';
+
 
 class Memo {
   int? id;
@@ -117,6 +117,8 @@ class MemoListProvider extends ChangeNotifier {
     loadMemos();
   }
 
+
+
   Future<void> deleteAllMemos() async {
     await _databaseHelper.deleteAllMemos();
     loadMemos();
@@ -125,11 +127,10 @@ class MemoListProvider extends ChangeNotifier {
 
 
   Future<void> showDeleteConfirmationDialog(BuildContext context) async {
-    return showDialog(
+    return showCupertinoDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text('確認'),
+        return CupertinoAlertDialog(
           content: Text('本当にすべてのメモを削除しますか？'),
           actions: <Widget>[
             TextButton(
@@ -202,16 +203,3 @@ class MemoCreateScreen extends StatelessWidget {
     );
   }
 }
-
-// void main() {
-//   runApp(
-//     MultiProvider(
-//       providers: [
-//         ChangeNotifierProvider(create: (context) => MemoListProvider()),
-//       ],
-//       child: MaterialApp(
-//         home: MemoCreateScreen(),
-//       ),
-//     ),
-//   );
-// }

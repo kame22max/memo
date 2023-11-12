@@ -1,17 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:memo/memo_list_page.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class MemoEditModel extends ChangeNotifier {
 
-  final titleController = TextEditingController();
-  final contentController = TextEditingController();
-
-  String? title;
-  String? content;
-
-}
 
 class MemoEditPage extends StatelessWidget {
 

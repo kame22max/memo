@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:memo/add_memo_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:memo/domain.dart';
-import 'package:memo/memo_edit_page.dart';
-import 'package:memo/memo_list_model.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
 
+import 'package:provider/provider.dart';
+
+import 'package:flutter/cupertino.dart';
 
 // class Memo {
 //   String title;
@@ -112,7 +108,7 @@ class MemoDetailScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              _showDeleteDialog(context, index);
+              _showDeleteConfirmationDialog(context, memo.id!);
               //画面遷移
             },
           ),
@@ -154,14 +150,14 @@ class MemoDetailScreen extends StatelessWidget {
 }
 
 void _showDeleteDialog(BuildContext context, int index) {
-  showDialog(
+  showCupertinoDialog(
     context: context,
     builder: (BuildContext dialogContext) {
-      return AlertDialog(
-        title: Text('メモを削除しますか？'),
+      return CupertinoAlertDialog(
+        content: Text('メモを削除しますか？'),
         actions: <Widget>[
           TextButton(
-            child: Text('Yes'),
+            child: Text('はい'),
             onPressed: () {
               final memoListProvider =
                   Provider.of<MemoListProvider>(context, listen: false);
@@ -170,7 +166,35 @@ void _showDeleteDialog(BuildContext context, int index) {
             },
           ),
           TextButton(
-            child: Text('No'),
+            child: Text('いいえ'),
+            onPressed: () {
+              Navigator.of(dialogContext).pop(); // ダイアログを閉じる
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        title: Text('メモを削除しますか？'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('はい'),
+            onPressed: () {
+              final memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
+              memoListProvider.deleteMemo(memoId);
+              Navigator.of(dialogContext).pop(); // ダイアログを閉じる
+              Navigator.pop(context); // メモ詳細画面を閉じる
+            },
+          ),
+          TextButton(
+            child: Text('いいえ'),
             onPressed: () {
               Navigator.of(dialogContext).pop(); // ダイアログを閉じる
             },
