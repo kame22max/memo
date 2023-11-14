@@ -52,17 +52,7 @@ class MemoDetailScreen extends StatelessWidget {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
-
                 _saveChanges(context, memo);
-                // // メモを編集し、Providerを使用して更新
-                // final updatedMemo = Memo(
-                //
-                //   title: titleController.text,
-                //   content: contentController.text,
-                // );
-                // final memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
-                // await memoListProvider.updateMemo(updatedMemo);
-
               },
               child: Text('保存'),
             ),
@@ -112,9 +102,7 @@ void _saveChanges(BuildContext context, Memo memo) {
   // Use MemoListProvider to update the memo
   var memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
   memoListProvider.updateMemo(memo);
-
   _showSaveConfirmationDialog(context);
-
   // Navigate back to MemoDetailScreen
 }
 
