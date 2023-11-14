@@ -76,10 +76,10 @@ class MemoListPage extends StatelessWidget {
 }
 
 void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
-  showDialog(
+  showCupertinoDialog(
     context: context,
     builder: (BuildContext dialogContext) {
-      return AlertDialog(
+      return CupertinoAlertDialog(
         title: Text('メモを削除しますか？'),
         actions: <Widget>[
           TextButton(

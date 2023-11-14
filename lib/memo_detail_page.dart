@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:memo/memo_domain.dart';
 import 'package:memo/memo_list_provider.dart';
@@ -11,8 +12,6 @@ class MemoDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController titleController = TextEditingController(text: memo.title);
-    final TextEditingController contentController = TextEditingController(text: memo.content);
 
     return Scaffold(
       appBar: AppBar(
@@ -32,28 +31,38 @@ class MemoDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             TextFormField(
-              controller: titleController,
+              initialValue: memo.title,
+              // controller: titleController,
               decoration: InputDecoration(labelText: 'タイトル'),
+              onChanged: (value) {
+                memo.title = value;
+              },
             ),
             SizedBox(height: 16),
             TextFormField(
-              controller: contentController,
+              initialValue: memo.content,
+              // controller: contentController,
               maxLines: null, // nullを指定すると複数行入力が可能になります
               keyboardType: TextInputType.multiline, // キーボードのタイプを指定
               decoration: InputDecoration(labelText: '内容'),
+              onChanged: (value){
+                memo.content = value;
+              },
             ),
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
-                // メモを編集し、Providerを使用して更新
-                final updatedMemo = Memo(
-                  title: titleController.text,
-                  content: contentController.text,
-                );
-                final memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
-                await memoListProvider.updateMemo(updatedMemo);
 
-                Navigator.pop(context);
+                _saveChanges(context, memo);
+                // // メモを編集し、Providerを使用して更新
+                // final updatedMemo = Memo(
+                //
+                //   title: titleController.text,
+                //   content: contentController.text,
+                // );
+                // final memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
+                // await memoListProvider.updateMemo(updatedMemo);
+
               },
               child: Text('保存'),
             ),
@@ -72,10 +81,10 @@ class MemoDetailScreen extends StatelessWidget {
 }
 
 void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
-  showDialog(
+  showCupertinoDialog(
     context: context,
     builder: (BuildContext dialogContext) {
-      return AlertDialog(
+      return CupertinoAlertDialog(
         title: Text('メモを削除しますか？'),
         actions: <Widget>[
           TextButton(
@@ -92,6 +101,35 @@ void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
             onPressed: () {
               Navigator.of(dialogContext).pop(); // ダイアログを閉じる
             },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _saveChanges(BuildContext context, Memo memo) {
+  // Use MemoListProvider to update the memo
+  var memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
+  memoListProvider.updateMemo(memo);
+
+  _showSaveConfirmationDialog(context);
+
+  // Navigate back to MemoDetailScreen
+}
+
+void _showSaveConfirmationDialog(BuildContext context) {
+  showCupertinoDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CupertinoAlertDialog(
+        title: Text('保存しました。'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+            },
+            child: Text('OK'),
           ),
         ],
       );
