@@ -35,6 +35,7 @@ class MemoListProvider extends ChangeNotifier {
   Future<void> deleteMemo(int id) async {
     await _databaseHelper.deleteMemo(id);
     loadMemos();
+
   }
 
 

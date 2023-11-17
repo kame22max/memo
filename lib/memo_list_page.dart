@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:memo/memo_create_page.dart';
 import 'package:memo/memo_detail_page.dart';
 import 'package:memo/memo_list_provider.dart';
@@ -12,64 +13,83 @@ class MemoListPage extends StatelessWidget {
     final memoListProvider = Provider.of<MemoListProvider>(context);
     final memos = memoListProvider.memos;
     return Scaffold(
+      backgroundColor: Colors.pinkAccent, // Scaffoldの背景色を設定
+
       appBar: AppBar(
-        title: Text('メモ一覧'),
-        leading: IconButton(icon: Icon(Icons.settings),
-        onPressed: (){
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  SettingPage(),
-            ),
-          );
-        }
+        backgroundColor: Colors.pink,
+        elevation: 0.0,
+        // AppBarの影をなくす
 
-
-    ),
-
+        title: Text(
+          'メモリスト',
+          style: TextStyle(
+            color: Colors.black, // AppBarのテキストの色を指定
+          ),
+        ),
+        // テキストの色を自動的に反転
+        leading: IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingPage(),
+                ),
+              ); //画面遷移
+            }),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () async {
-              await memoListProvider.deleteAllMemosWithConfirmation(context);
-              //画面遷移
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MemoCreateScreen(),
+                ),
+              ); //画面遷移
             },
           ),
         ],
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(
+          color: Colors.black, // アイコンの色を指定
+        ),
       ),
       body: ListView.builder(
         itemCount: memos.length,
         itemBuilder: (context, index) {
           final memo = memos[index];
-          return Card(
-            child: ListTile(
-              title: Text(memo.title),
-              subtitle: Text(memo.content),
-              onTap: () {
-                // メモの詳細ページに遷移
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        MemoDetailScreen(memo: memo, index: index),
-                  ),
-                );
-              },
-              onLongPress: () {
-                _showDeleteConfirmationDialog(context, memo.id!);
-              },
+          // 仮のメモの内容
+          String memoContent = memo.content;
+
+          // メモの内容を10文字までに制限
+          String truncatedContent = memoContent.length > 10
+              ? '${memoContent.substring(0, 10)}...'
+              : memoContent;
+
+          return SizedBox(
+            height: 150,
+            child: Card(
+              child: ListTile(
+                title: Text(memo.title),
+                subtitle: Text(truncatedContent),
+                onTap: () {
+                  // メモの詳細ページに遷移
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          MemoDetailScreen(memo: memo, index: index),
+                    ),
+                  );
+                },
+                onLongPress: () {
+                  _showDeleteConfirmationDialog(context, memo.id!);
+                },
+              ),
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => MemoCreateScreen()));
-        },
-        label: Text('新規作成'), //テキスト
-        icon: Icon(Icons.add), //アイコン
       ),
     );
   }
@@ -83,13 +103,25 @@ void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
         title: Text('メモを削除しますか？'),
         actions: <Widget>[
           TextButton(
-            child: Text('はい'),
-            onPressed: () {
-              final memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
-              memoListProvider.deleteMemo(memoId);
-              Navigator.of(dialogContext).pop(); // ダイアログを閉じる
-            },
-          ),
+              child: Text('はい'),
+              onPressed: () {
+                final memoListProvider =
+                    Provider.of<MemoListProvider>(context, listen: false);
+                memoListProvider.deleteMemo(memoId);
+                Navigator.of(dialogContext).pop(); // ダイアログを閉じる
+                // メモを削除した後にSnackBarを表示
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('メモを削除しました。'),
+                    action: SnackBarAction(
+                      label: '元に戻す',
+                      onPressed: () {
+                      },
+                    ),
+                  ),
+                );
+
+              }),
           TextButton(
             child: Text('いいえ'),
             onPressed: () {
@@ -101,4 +133,3 @@ void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
     },
   );
 }
-

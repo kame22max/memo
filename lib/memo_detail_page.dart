@@ -1,20 +1,34 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:memo/memo_domain.dart';
 import 'package:memo/memo_list_provider.dart';
+import 'package:memo/setting_page.dart';
 import 'package:provider/provider.dart';
 
 class MemoDetailScreen extends StatelessWidget {
   final Memo memo;
   final int index;
 
+
   MemoDetailScreen({required this.memo, required this.index});
+
 
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return
+      MaterialApp(
+          theme: Provider.of<ThemeNotifier>(context).currentTheme,
+
+          home : Scaffold(
       appBar: AppBar(
+        // backgroundColor: Colors.white,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark,
+        // elevation: 0.0,
+        // iconTheme: IconThemeData(
+        //   color: Colors.black, // アイコンの色を指定
+        // ),
         title: Text('メモ詳細'),
         actions: [
           IconButton(
@@ -66,7 +80,7 @@ class MemoDetailScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+        ));
   }
 }
 

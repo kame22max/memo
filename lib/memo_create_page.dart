@@ -1,17 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:memo/memo_domain.dart';
 import 'package:memo/memo_list_provider.dart';
 import 'package:provider/provider.dart';
 
 class MemoCreateScreen extends StatelessWidget {
-  final TextEditingController titleController = TextEditingController(text: '名無しのタイトル');
+  final TextEditingController titleController =
+      TextEditingController(text: '名無しのタイトル');
   final TextEditingController contentController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('新しいメモを作成'),
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        elevation: 0.0,
+        // AppBarの影をなくす
+        iconTheme: IconThemeData(
+          color: Colors.black, // アイコンの色を指定
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.done),
+            onPressed: () {
+              final String title = titleController.text;
+              final String content = contentController.text;
+              final memo = Memo(title: title, content: content);
+
+              // Providerを使用して新しいメモを追加
+              final memoListProvider =
+                  Provider.of<MemoListProvider>(context, listen: false);
+              memoListProvider.addMemo(memo);
+
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -24,33 +49,13 @@ class MemoCreateScreen extends StatelessWidget {
             SizedBox(height: 16),
             TextFormField(
               controller: contentController,
-              maxLines: null,  // 複数行入力可能に設定
-              keyboardType: TextInputType.multiline,  // キーボードのタイプを指定
-              decoration: InputDecoration(labelText: '内容'),
-
+              maxLines: null, // 複数行入力可能に設定
+              keyboardType: TextInputType.multiline, // キーボードのタイプを指定
+              decoration: InputDecoration(
+                labelText: '内容', border: InputBorder.none, // 下線をなくす
+              ),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                final String title = titleController.text;
-                final String content = contentController.text;
-                final memo = Memo(title: title, content: content);
-
-                // Providerを使用して新しいメモを追加
-                final memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
-                memoListProvider.addMemo(memo);
-
-                Navigator.pop(context);
-              },
-              child: Text('保存'),
-            ),
-            SizedBox(height: 2),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.pop(context);
-              },
-              child: Text('キャンセル'),
-            ),
           ],
         ),
       ),
