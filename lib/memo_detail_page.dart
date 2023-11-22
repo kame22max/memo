@@ -3,84 +3,69 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:memo/memo_domain.dart';
 import 'package:memo/memo_list_provider.dart';
-import 'package:memo/setting_page.dart';
 import 'package:provider/provider.dart';
 
 class MemoDetailScreen extends StatelessWidget {
   final Memo memo;
   final int index;
 
-
   MemoDetailScreen({required this.memo, required this.index});
-
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.pinkAccent,
 
-    return
-      MaterialApp(
-          theme: Provider.of<ThemeNotifier>(context).currentTheme,
+            title: Text('メモ編集'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  _showDeleteConfirmationDialog(context, memo.id!);
+                  //画面遷移
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.done),
+                onPressed: () {
+                  _saveChanges(context, memo);
 
-          home : Scaffold(
-      appBar: AppBar(
-        // backgroundColor: Colors.white,
-        // systemOverlayStyle: SystemUiOverlayStyle.dark,
-        // elevation: 0.0,
-        // iconTheme: IconThemeData(
-        //   color: Colors.black, // アイコンの色を指定
-        // ),
-        title: Text('メモ詳細'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              _showDeleteConfirmationDialog(context, memo.id!);
-              //画面遷移
-            },
+                  //画面遷移
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextFormField(
-              initialValue: memo.title,
-              // controller: titleController,
-              decoration: InputDecoration(labelText: 'タイトル'),
-              onChanged: (value) {
-                memo.title = value;
-              },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextFormField(
+                  initialValue: memo.title,
+                  // controller: titleController,
+                  decoration: InputDecoration(labelText: 'タイトル'),
+                  onChanged: (value) {
+                    memo.title = value;
+                  },
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  initialValue: memo.content,
+                  // controller: contentController,
+                  maxLines: null,
+                  // nullを指定すると複数行入力が可能になります
+                  keyboardType: TextInputType.multiline,
+                  // キーボードのタイプを指定
+                  decoration: InputDecoration(labelText: '内容'),
+                  onChanged: (value) {
+                    memo.content = value;
+                  },
+                ),
+
+              ],
             ),
-            SizedBox(height: 16),
-            TextFormField(
-              initialValue: memo.content,
-              // controller: contentController,
-              maxLines: null, // nullを指定すると複数行入力が可能になります
-              keyboardType: TextInputType.multiline, // キーボードのタイプを指定
-              decoration: InputDecoration(labelText: '内容'),
-              onChanged: (value){
-                memo.content = value;
-              },
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                _saveChanges(context, memo);
-              },
-              child: Text('保存'),
-            ),
-            SizedBox(height: 2),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.pop(context);
-              },
-              child: Text('キャンセル'),
-            ),
-          ],
-        ),
-      ),
-        ));
+          ),
+        );
   }
 }
 
@@ -94,7 +79,8 @@ void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
           TextButton(
             child: Text('はい'),
             onPressed: () {
-              final memoListProvider = Provider.of<MemoListProvider>(context, listen: false);
+              final memoListProvider =
+                  Provider.of<MemoListProvider>(context, listen: false);
               memoListProvider.deleteMemo(memoId);
               Navigator.of(dialogContext).pop(); // ダイアログを閉じる
               Navigator.pop(context); // メモ詳細画面を閉じる

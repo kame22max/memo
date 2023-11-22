@@ -8,9 +8,11 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (context) => DarkThemeNotifier()..loadDarkModeSetting()),
-        ChangeNotifierProvider(create: (context) => ThemeNotifier()),
+        ChangeNotifierProvider(create: (context) {
+          ThemeNotifier themeNotifier = ThemeNotifier();
+          themeNotifier.loadSettings();
+          return themeNotifier;
+        }),
         ChangeNotifierProvider(create: (context) => MemoListProvider()),
       ],
       child: MyApp(),
@@ -23,8 +25,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: Provider.of<DarkThemeNotifier>(context).getTheme(),
+      theme: Provider.of<ThemeNotifier>(context).getTheme(),
       home: MemoListPage(),
     );
   }
 }
+

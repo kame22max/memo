@@ -1,53 +1,76 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:memo/memo_list_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// テーマ情報を管理するNotifier
+enum AppThemeColor { Red, Green, Blue }
+
 class ThemeNotifier extends ChangeNotifier {
-  ThemeData _currentTheme = ThemeData.light();
 
-  ThemeData get currentTheme => _currentTheme;
-
-  void setThemeColor(Color color) {
-    _currentTheme = ThemeData.light().copyWith(primaryColor: color);
-    notifyListeners();
-  }
-}
-
-class DarkThemeNotifier extends ChangeNotifier {
   bool _isDarkMode = false;
+  AppThemeColor _appThemeColor = AppThemeColor.Red; // 初期テーマカラー
 
   bool get isDarkMode => _isDarkMode;
+  AppThemeColor get appThemeColor => _appThemeColor;
 
   void toggleDarkMode() {
     _isDarkMode = !_isDarkMode;
-    _saveDarkModeSetting(_isDarkMode); // ダークモードの設定を保存
-
+    _saveDarkModeSetting(_isDarkMode);
     notifyListeners();
   }
-  Future<void> _saveDarkModeSetting(bool value) async {
+
+  void setAppThemeColor(AppThemeColor color) {
+    print('Selected Theme Color: $color');
+
+    _saveAppThemeColor(color);
+    _appThemeColor = color;
+    notifyListeners();
+  }
+
+  void _saveDarkModeSetting(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('darkMode', value);
   }
 
-  Future<void> loadDarkModeSetting() async {
+  void _saveAppThemeColor(AppThemeColor color) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('appThemeColor', color.index);
+  }
+
+  void loadSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _isDarkMode = prefs.getBool('darkMode') ?? false;
+    int themeColorIndex = prefs.getInt('appThemeColor') ?? AppThemeColor.Red.index;
+    _appThemeColor = AppThemeColor.values[themeColorIndex];
     notifyListeners();
   }
 
   ThemeData getTheme() {
-    return _isDarkMode ? ThemeData.dark() : ThemeData.light();
+    Color primaryColor;
+    switch (_appThemeColor) {
+      case AppThemeColor.Red:
+        primaryColor = Colors.red;
+        break;
+      case AppThemeColor.Green:
+        primaryColor = Colors.green;
+        break;
+      case AppThemeColor.Blue:
+        primaryColor = Colors.blue;
+        break;
+    }
+
+    return _isDarkMode
+        ? ThemeData.dark().copyWith(primaryColor: primaryColor)
+        : ThemeData.light().copyWith(primaryColor: primaryColor);
   }
 }
+
 
 class SettingPage extends StatelessWidget {
   final List<Color> themeColors = [Colors.red, Colors.blue, Colors.yellow];
 
   @override
   Widget build(BuildContext context) {
-    final memoListProvider = Provider.of<MemoListProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,47 +79,42 @@ class SettingPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'General Settings',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            for (var color in themeColors)
-              ListTile(
-                title: Text(color.toString()),
-                onTap: () {
+            ListTile(
+              title: Text('ダークモード'),
+              trailing: CupertinoSwitch(
+                value: Provider.of<ThemeNotifier>(context).isDarkMode,
+                onChanged: (value) {
                   Provider.of<ThemeNotifier>(context, listen: false)
-                      .setThemeColor(color);
-                  Navigator.pop(context); // 設定画面を閉じる
+                      .toggleDarkMode();
                 },
               ),
-    ListTile(
-    title: Text('Dark Mode'),
-    trailing: Switch(
-    value: Provider.of<DarkThemeNotifier>(context).isDarkMode,
-    onChanged: (value) {
-    Provider.of<DarkThemeNotifier>(context, listen: false)
-        .toggleDarkMode();
-    },
-    ),
-    ),
-
-            Divider(),
-            Text(
-              'メモを全削除',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             ListTile(
-              title: Text('Sign Out'),
-              onTap: () async {
-                await memoListProvider.deleteAllMemosWithConfirmation(context);
-              },
+              title: Text('Theme Color'),
+              trailing: DropdownButton(
+                value: Provider.of<ThemeNotifier>(context).appThemeColor,
+                items: AppThemeColor.values.map((color) {
+                  return DropdownMenuItem(
+                    value: color,
+                    child: Text(color.toString().split('.').last),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  Provider.of<ThemeNotifier>(context, listen: false)
+                      .setAppThemeColor(value!);
+                },
+              ),
             ),
+            ListTile(
+              title: Text('全てのメモを削除'),
+              onTap: (){
+
+              },
+            )
           ],
         ),
       ),
-
     );
   }
 }

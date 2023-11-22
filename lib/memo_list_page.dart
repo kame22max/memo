@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:memo/memo_create_page.dart';
 import 'package:memo/memo_detail_page.dart';
 import 'package:memo/memo_list_provider.dart';
-import 'package:memo/setting_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -13,29 +11,21 @@ class MemoListPage extends StatelessWidget {
     final memoListProvider = Provider.of<MemoListProvider>(context);
     final memos = memoListProvider.memos;
     return Scaffold(
-      backgroundColor: Colors.pinkAccent, // Scaffoldの背景色を設定
-
       appBar: AppBar(
-        backgroundColor: Colors.pink,
-        elevation: 0.0,
-        // AppBarの影をなくす
-
-        title: Text(
-          'メモリスト',
-          style: TextStyle(
-            color: Colors.black, // AppBarのテキストの色を指定
-          ),
-        ),
+        backgroundColor: Colors.pinkAccent,
+        title: Text('メモリスト'),
         // テキストの色を自動的に反転
         leading: IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingPage(),
-                ),
-              ); //画面遷移
+            icon: Icon(Icons.delete),
+            onPressed: () async {
+
+              await memoListProvider.deleteAllMemosWithConfirmation(context);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => SettingPage(),
+              //   ),
+              // ); //画面遷移
             }),
         actions: [
           IconButton(
@@ -50,10 +40,7 @@ class MemoListPage extends StatelessWidget {
             },
           ),
         ],
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: IconThemeData(
-          color: Colors.black, // アイコンの色を指定
-        ),
+
       ),
       body: ListView.builder(
         itemCount: memos.length,
@@ -115,12 +102,10 @@ void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
                     content: Text('メモを削除しました。'),
                     action: SnackBarAction(
                       label: '元に戻す',
-                      onPressed: () {
-                      },
+                      onPressed: () {},
                     ),
                   ),
                 );
-
               }),
           TextButton(
             child: Text('いいえ'),

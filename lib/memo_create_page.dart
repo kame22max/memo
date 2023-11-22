@@ -13,13 +13,9 @@ class MemoCreateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        elevation: 0.0,
-        // AppBarの影をなくす
-        iconTheme: IconThemeData(
-          color: Colors.black, // アイコンの色を指定
-        ),
+        backgroundColor: Colors.pinkAccent,
+
+        title: Text('新規作成'),
         actions: [
           IconButton(
             icon: const Icon(Icons.done),
