@@ -50,8 +50,8 @@ class MemoListPage extends StatelessWidget {
           String memoContent = memo.content;
 
           // メモの内容を10文字までに制限
-          String truncatedContent = memoContent.length > 10
-              ? '${memoContent.substring(0, 10)}...'
+          String truncatedContent = memoContent.length > 20
+              ? '${memoContent.substring(0, 20)}...'
               : memoContent;
 
           return SizedBox(

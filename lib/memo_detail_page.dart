@@ -56,7 +56,7 @@ class MemoDetailScreen extends StatelessWidget {
                   // nullを指定すると複数行入力が可能になります
                   keyboardType: TextInputType.multiline,
                   // キーボードのタイプを指定
-                  decoration: InputDecoration(labelText: '内容'),
+                  decoration: InputDecoration(labelText: '内容',border: InputBorder.none,),
                   onChanged: (value) {
                     memo.content = value;
                   },
