@@ -2,22 +2,28 @@ class Memo {
   int? id;
   String title;
   String content;
+  DateTime createdAt;
 
-  Memo({this.id, required this.title, required this.content});
+  Memo({
+    this.id,
+    required this.title,
+    required this.content,
+    required this.createdAt,
+  });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'title': title,
-      'content': content,
-    };
-  }
+  // MapからMemoオブジェクトへの変換
+  factory Memo.fromMap(Map<String, dynamic> json) => Memo(
+        id: json['id'],
+        title: json['title'],
+        content: json['content'],
+        createdAt: DateTime.parse(json['created_at']),
+      );
 
-  factory Memo.fromMap(Map<String, dynamic> map) {
-    return Memo(
-      id: map['id'],
-      title: map['title'],
-      content: map['content'],
-    );
-  }
+  // MemoオブジェクトからMapへの変換
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'title': title,
+        'content': content,
+        'created_at': createdAt.toIso8601String(), // ISO 8601形式で保存
+      };
 }

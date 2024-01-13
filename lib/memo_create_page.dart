@@ -43,6 +43,7 @@ class MemoCreateScreen extends StatelessWidget {
               decoration: InputDecoration(labelText: 'タイトル'),
             ),
             SizedBox(height: 16),
+            Text("日付"),
             TextFormField(
               controller: contentController,
               maxLines: null, // 複数行入力可能に設定
