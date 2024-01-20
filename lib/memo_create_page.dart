@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:memo/memo_database.dart';
 import 'package:memo/memo_domain.dart';
 import 'package:memo/memo_list_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 
 class MemoCreateScreen extends StatelessWidget {
@@ -23,7 +21,6 @@ class MemoCreateScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.done),
             onPressed: () async {
-              final DateTime createAt = DateTime.now();
               final String title = titleController.text;
               final String content = contentController.text;
 
