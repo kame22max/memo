@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:memo/memo_database.dart';
 import 'package:memo/memo_domain.dart';
 import 'package:memo/memo_list_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+
 
 class MemoCreateScreen extends StatelessWidget {
   final TextEditingController titleController =
@@ -19,10 +22,12 @@ class MemoCreateScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.done),
-            onPressed: () {
+            onPressed: () async {
+              final DateTime createAt = DateTime.now();
               final String title = titleController.text;
               final String content = contentController.text;
-              final memo = Memo(title: title, content: content);
+
+              final memo = Memo(title: title, content: content, );
 
               // Providerを使用して新しいメモを追加
               final memoListProvider =
@@ -43,7 +48,6 @@ class MemoCreateScreen extends StatelessWidget {
               decoration: InputDecoration(labelText: 'タイトル'),
             ),
             SizedBox(height: 16),
-            Text("日付"),
             TextFormField(
               controller: contentController,
               maxLines: null, // 複数行入力可能に設定
@@ -58,4 +62,5 @@ class MemoCreateScreen extends StatelessWidget {
       ),
     );
   }
+
 }

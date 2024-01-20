@@ -19,6 +19,7 @@ dependencies:
   riverpod: ^2.4.5
   sqflite: ^2.3.0
   flutter_launcher_icons: ^0.13.1
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

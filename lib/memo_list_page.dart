@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:memo/memo_create_page.dart';
 import 'package:memo/memo_detail_page.dart';
 import 'package:memo/memo_list_provider.dart';
@@ -18,7 +19,6 @@ class MemoListPage extends StatelessWidget {
         leading: IconButton(
             icon: Icon(Icons.delete),
             onPressed: () async {
-
               await memoListProvider.deleteAllMemosWithConfirmation(context);
               // Navigator.push(
               //   context,
@@ -60,6 +60,7 @@ class MemoListPage extends StatelessWidget {
               child: ListTile(
                 title: Text(memo.title),
                 subtitle: Text(truncatedContent),
+
                 onTap: () {
                   // メモの詳細ページに遷移
                   Navigator.push(
@@ -100,10 +101,10 @@ void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('メモを削除しました。'),
-                    action: SnackBarAction(
-                      label: '元に戻す',
-                      onPressed: () {},
-                    ),
+                    // action: SnackBarAction(
+                    //   label: '元に戻す',
+                    //   onPressed: () {},
+                    // ),
                   ),
                 );
               }),

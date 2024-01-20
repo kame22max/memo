@@ -14,7 +14,7 @@ class MemoDatabaseHelper {
 
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute(
-      'CREATE TABLE memos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT)',
+      'CREATE TABLE memos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT,created_at TEXT)',
     );
   }
 
@@ -49,7 +49,6 @@ class MemoDatabaseHelper {
   Future<void> deleteAllMemos() async {
     await _database.delete('memos');
   }
-
 
 }
 
