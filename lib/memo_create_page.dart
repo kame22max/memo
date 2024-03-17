@@ -23,8 +23,9 @@ class MemoCreateScreen extends StatelessWidget {
             onPressed: () async {
               final String title = titleController.text;
               final String content = contentController.text;
+              DateTime? selectedDate;
 
-              final memo = Memo(title: title, content: content, );
+              final memo = Memo(title: title, content: content,);
 
               // Providerを使用して新しいメモを追加
               final memoListProvider =
