@@ -46,9 +46,12 @@ class MemoDetailScreen extends StatelessWidget {
                   decoration: InputDecoration(labelText: 'タイトル'),
                   onChanged: (value) {
                     memo.title = value;
+                    memo.edited_date = DateTime.now(); // 編集日付を更新
+
                   },
                 ),
                 SizedBox(height: 16),
+
                 TextFormField(
                   initialValue: memo.content,
                   // controller: contentController,
@@ -59,6 +62,8 @@ class MemoDetailScreen extends StatelessWidget {
                   decoration: InputDecoration(labelText: '内容',border: InputBorder.none,),
                   onChanged: (value) {
                     memo.content = value;
+                    memo.edited_date = DateTime.now(); // 編集日付を更新
+
                   },
                 ),
 
@@ -68,6 +73,9 @@ class MemoDetailScreen extends StatelessWidget {
         );
   }
 }
+
+
+
 
 void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
   showCupertinoDialog(
@@ -97,6 +105,7 @@ void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
     },
   );
 }
+
 
 void _saveChanges(BuildContext context, Memo memo) {
   // Use MemoListProvider to update the memo

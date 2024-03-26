@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:memo/memo_create_page.dart';
 import 'package:memo/memo_detail_page.dart';
 import 'package:memo/memo_list_provider.dart';
@@ -47,18 +48,26 @@ class MemoListPage extends StatelessWidget {
           final memo = memos[index];
           // 仮のメモの内容
           String memoContent = memo.content;
-
           // メモの内容を10文字までに制限
           String truncatedContent = memoContent.length > 15
               ? '${memoContent.substring(0, 15)}...'
               : memoContent;
 
           return SizedBox(
-            height: 150,
+            height: 120,
             child: Card(
               child: ListTile(
                 title: Text(memo.title),
-                subtitle: Text(truncatedContent),
+
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+                    Text(truncatedContent),
+                  ],
+                ),
+                trailing: Text(_formatDateTime(memo.register_date)), // 日付を右下に表示
+
 
                 onTap: () {
                   // メモの詳細ページに遷移
@@ -80,6 +89,10 @@ class MemoListPage extends StatelessWidget {
       ),
     );
   }
+}
+String _formatDateTime(DateTime dateTime) {
+  // 登録日付を指定した形式にフォーマット
+  return DateFormat('yyyy年MM月dd日').format(dateTime);
 }
 
 void _showDeleteConfirmationDialog(BuildContext context, int memoId) {
